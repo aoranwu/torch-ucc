@@ -294,7 +294,7 @@ c10::intrusive_ptr<ProcessGroup::Work> ProcessGroupUCC::broadcast(
   return enqueue_request(coll_req, nullptr);
 }
 
-c10::intrusive_ptr<ProcessGroup::Work> ProcessGroupUCC::allreduce(
+c10::intrusive_ptr<ProcessGroup::Work> ProcessGroupUCC::_allreduce(
     std::vector<at::Tensor>& tensors,
     const AllreduceOptions& opts) {
   torch_ucc_coll_comm_t* ucc_comm;
@@ -310,6 +310,23 @@ c10::intrusive_ptr<ProcessGroup::Work> ProcessGroupUCC::allreduce(
   }
 
   return enqueue_request(coll_req, nullptr);
+}
+
+c10::intrusive_ptr<ProcessGroup::Work> ProcessGroupUCC::allreduce(
+    std::vector<at::Tensor>& tensors,
+    const AllreduceOptions& opts) {
+  uint32_t priority = 0;
+  
+  c10d::CollectiveOptions collectiveOpts{.allreduceOpts = opts};
+  auto work_fake = c10::make_intrusive<c10d::ProcessGroup::Work>();
+  
+  auto real_work = c10::make_intrusive<ProcessGroup::CollectiveWork>(
+      collectiveOpts, OpType::ALLREDUCE, &tensors, work_fake, priority);
+  collective_queue_.push(real_work);
+  // collective_queue_.emplace(collectiveOpts, OpType::ALLREDUCE, &tensors, work_fake, priority); 
+
+  //  Lam: This work is a fake work, will substitute later.
+  return work_fake;
 }
 
 c10::intrusive_ptr<ProcessGroup::Work> ProcessGroupUCC::allreduce_coalesced(
