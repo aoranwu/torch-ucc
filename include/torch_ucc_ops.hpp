@@ -46,10 +46,18 @@ struct torch_ucc_coll_request_t {
   size_t size(){
     size_t res = 0;
     for(auto i = 0;i<src.size();i++){
-      res += src[i].size(0);
+      size_t tmp = 1;
+      for(auto j=0;j<src[i].dim();j++){
+        tmp*=src[i].size(j);
+      }
+      res += tmp;
     }
     for(auto i = 0;i<dst.size();i++){
-      res += dst[i].size(0);
+      size_t tmp = 1;
+      for(auto j=0;j<dst[i].dim();j++){
+        tmp*=dst[i].size(j);
+      }
+      res += tmp;
     }
     return res;
   }
