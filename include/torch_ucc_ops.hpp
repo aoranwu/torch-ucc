@@ -43,6 +43,16 @@ struct torch_ucc_coll_request_t {
   c10::Device device;
   std::vector<at::Tensor> src;
   std::vector<at::Tensor> dst;
+  size_t size(){
+    size_t res = 0;
+    for(auto i = 0;i<src.size();i++){
+      res += src[i].size(0);
+    }
+    for(auto i = 0;i<dst.size();i++){
+      res += dst[i].size(0);
+    }
+    return res;
+  }
 #ifdef USE_CUDA
   std::unique_ptr<at::cuda::CUDAEvent> tnsr_ready;
   std::unique_ptr<at::cuda::CUDAEvent> coll_finished;

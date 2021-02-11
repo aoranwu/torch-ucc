@@ -1,0 +1,46 @@
+Release build
+CUDA support is enabled
+running clean
+removing 'build/temp.linux-x86_64-3.8' (and everything under it)
+removing 'build'
+running install
+running bdist_egg
+running egg_info
+writing torch_ucc.egg-info/PKG-INFO
+writing dependency_links to torch_ucc.egg-info/dependency_links.txt
+writing top-level names to torch_ucc.egg-info/top_level.txt
+reading manifest file 'torch_ucc.egg-info/SOURCES.txt'
+writing manifest file 'torch_ucc.egg-info/SOURCES.txt'
+installing library code to build/bdist.linux-x86_64/egg
+running install_lib
+running build_ext
+building 'torch_ucc' extension
+creating build
+creating build/temp.linux-x86_64-3.8
+creating build/temp.linux-x86_64-3.8/src
+gcc -pthread -B /home/wisr/anaconda3/envs/reorder/compiler_compat -Wl,--sysroot=/ -Wsign-compare -DNDEBUG -g -fwrapv -O3 -Wall -Wstrict-prototypes -fPIC -I/home/wisr/aoranwu/reordering/torch-ucc/include/ -I/home/wisr/asinghvi/ucx/include/ -I/home/wisr/aoranwu/reordering/xccl/install/include/ -I/home/wisr/anaconda3/envs/reorder/lib/python3.8/site-packages/torch/include -I/home/wisr/anaconda3/envs/reorder/lib/python3.8/site-packages/torch/include/torch/csrc/api/include -I/home/wisr/anaconda3/envs/reorder/lib/python3.8/site-packages/torch/include/TH -I/home/wisr/anaconda3/envs/reorder/lib/python3.8/site-packages/torch/include/THC -I/usr/local/cuda-10.2/include -I/home/wisr/anaconda3/envs/reorder/include/python3.8 -c src/torch_ucc.cpp -o build/temp.linux-x86_64-3.8/src/torch_ucc.o -DUSE_CUDA -DTORCH_API_INCLUDE_EXTENSION_H -DPYBIND11_COMPILER_TYPE="_gcc" -DPYBIND11_STDLIB="_libstdcpp" -DPYBIND11_BUILD_ABI="_cxxabi1011" -DTORCH_EXTENSION_NAME=torch_ucc -D_GLIBCXX_USE_CXX11_ABI=0 -std=c++14
+gcc -pthread -B /home/wisr/anaconda3/envs/reorder/compiler_compat -Wl,--sysroot=/ -Wsign-compare -DNDEBUG -g -fwrapv -O3 -Wall -Wstrict-prototypes -fPIC -I/home/wisr/aoranwu/reordering/torch-ucc/include/ -I/home/wisr/asinghvi/ucx/include/ -I/home/wisr/aoranwu/reordering/xccl/install/include/ -I/home/wisr/anaconda3/envs/reorder/lib/python3.8/site-packages/torch/include -I/home/wisr/anaconda3/envs/reorder/lib/python3.8/site-packages/torch/include/torch/csrc/api/include -I/home/wisr/anaconda3/envs/reorder/lib/python3.8/site-packages/torch/include/TH -I/home/wisr/anaconda3/envs/reorder/lib/python3.8/site-packages/torch/include/THC -I/usr/local/cuda-10.2/include -I/home/wisr/anaconda3/envs/reorder/include/python3.8 -c src/torch_ucc_sendrecv.cpp -o build/temp.linux-x86_64-3.8/src/torch_ucc_sendrecv.o -DUSE_CUDA -DTORCH_API_INCLUDE_EXTENSION_H -DPYBIND11_COMPILER_TYPE="_gcc" -DPYBIND11_STDLIB="_libstdcpp" -DPYBIND11_BUILD_ABI="_cxxabi1011" -DTORCH_EXTENSION_NAME=torch_ucc -D_GLIBCXX_USE_CXX11_ABI=0 -std=c++14
+gcc -pthread -B /home/wisr/anaconda3/envs/reorder/compiler_compat -Wl,--sysroot=/ -Wsign-compare -DNDEBUG -g -fwrapv -O3 -Wall -Wstrict-prototypes -fPIC -I/home/wisr/aoranwu/reordering/torch-ucc/include/ -I/home/wisr/asinghvi/ucx/include/ -I/home/wisr/aoranwu/reordering/xccl/install/include/ -I/home/wisr/anaconda3/envs/reorder/lib/python3.8/site-packages/torch/include -I/home/wisr/anaconda3/envs/reorder/lib/python3.8/site-packages/torch/include/torch/csrc/api/include -I/home/wisr/anaconda3/envs/reorder/lib/python3.8/site-packages/torch/include/TH -I/home/wisr/anaconda3/envs/reorder/lib/python3.8/site-packages/torch/include/THC -I/usr/local/cuda-10.2/include -I/home/wisr/anaconda3/envs/reorder/include/python3.8 -c src/torch_xccl.cpp -o build/temp.linux-x86_64-3.8/src/torch_xccl.o -DUSE_CUDA -DTORCH_API_INCLUDE_EXTENSION_H -DPYBIND11_COMPILER_TYPE="_gcc" -DPYBIND11_STDLIB="_libstdcpp" -DPYBIND11_BUILD_ABI="_cxxabi1011" -DTORCH_EXTENSION_NAME=torch_ucc -D_GLIBCXX_USE_CXX11_ABI=0 -std=c++14
+creating build/lib.linux-x86_64-3.8
+g++ -pthread -shared -B /home/wisr/anaconda3/envs/reorder/compiler_compat -L/home/wisr/anaconda3/envs/reorder/lib -Wl,-rpath=/home/wisr/anaconda3/envs/reorder/lib -Wl,--no-as-needed -Wl,--sysroot=/ build/temp.linux-x86_64-3.8/src/torch_ucc.o build/temp.linux-x86_64-3.8/src/torch_ucc_sendrecv.o build/temp.linux-x86_64-3.8/src/torch_xccl.o -L/home/wisr/asinghvi/ucx/lib/ -L/home/wisr/aoranwu/reordering/xccl/install/lib/ -L/home/wisr/anaconda3/envs/reorder/lib/python3.8/site-packages/torch/lib -L/usr/local/cuda-10.2/lib64 -lucp -luct -lucm -lucs -lxccl -lc10 -ltorch -ltorch_cpu -ltorch_python -lcudart -lc10_cuda -ltorch_cuda -o build/lib.linux-x86_64-3.8/torch_ucc.cpython-38-x86_64-linux-gnu.so
+creating build/bdist.linux-x86_64
+creating build/bdist.linux-x86_64/egg
+copying build/lib.linux-x86_64-3.8/torch_ucc.cpython-38-x86_64-linux-gnu.so -> build/bdist.linux-x86_64/egg
+creating stub loader for torch_ucc.cpython-38-x86_64-linux-gnu.so
+byte-compiling build/bdist.linux-x86_64/egg/torch_ucc.py to torch_ucc.cpython-38.pyc
+creating build/bdist.linux-x86_64/egg/EGG-INFO
+copying torch_ucc.egg-info/PKG-INFO -> build/bdist.linux-x86_64/egg/EGG-INFO
+copying torch_ucc.egg-info/SOURCES.txt -> build/bdist.linux-x86_64/egg/EGG-INFO
+copying torch_ucc.egg-info/dependency_links.txt -> build/bdist.linux-x86_64/egg/EGG-INFO
+copying torch_ucc.egg-info/top_level.txt -> build/bdist.linux-x86_64/egg/EGG-INFO
+writing build/bdist.linux-x86_64/egg/EGG-INFO/native_libs.txt
+creating 'dist/torch_ucc-0.1.0-py3.8-linux-x86_64.egg' and adding 'build/bdist.linux-x86_64/egg' to it
+removing 'build/bdist.linux-x86_64/egg' (and everything under it)
+Processing torch_ucc-0.1.0-py3.8-linux-x86_64.egg
+creating /home/wisr/anaconda3/envs/reorder/lib/python3.8/site-packages/torch_ucc-0.1.0-py3.8-linux-x86_64.egg
+Extracting torch_ucc-0.1.0-py3.8-linux-x86_64.egg to /home/wisr/anaconda3/envs/reorder/lib/python3.8/site-packages
+Adding torch-ucc 0.1.0 to easy-install.pth file
+
+Installed /home/wisr/anaconda3/envs/reorder/lib/python3.8/site-packages/torch_ucc-0.1.0-py3.8-linux-x86_64.egg
+Processing dependencies for torch-ucc==0.1.0
+Finished processing dependencies for torch-ucc==0.1.0

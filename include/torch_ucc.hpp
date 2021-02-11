@@ -29,6 +29,11 @@ namespace c10d {
 
 class ProcessGroupUCC : public ProcessGroup {
  public:
+    enum class ORDERING {
+        FIFO=0,
+        LIFO,
+        SJF
+    };
   class WorkUCX : public ProcessGroup::Work {
    public:
     WorkUCX(torch_ucx_request_t* request, torch_ucx_comm_t* ucx_comm)
@@ -59,6 +64,7 @@ class ProcessGroupUCC : public ProcessGroup {
     bool isCompleted() override;
     bool isSuccess() const override;
     bool wait(std::chrono::milliseconds timeout = kUnsetTimeout) override;
+    torch_ucc_coll_request_t* coll_req{};
 
    protected:
     torch_ucc_coll_ops_t coll_ops;
@@ -69,7 +75,7 @@ class ProcessGroupUCC : public ProcessGroup {
     char* scratch;
     std::vector<at::Tensor> src;
     std::vector<at::Tensor> dst;
-    torch_ucc_coll_request_t* coll_req{};
+    
 
     friend class ProcessGroupUCC;
   };
@@ -166,6 +172,7 @@ class ProcessGroupUCC : public ProcessGroup {
   }
 
  protected:
+  ORDERING ordering_;
   c10::intrusive_ptr<Store> store_;
   torch_ucx_comm_t* ucx_comm{};
   torch_ucc_coll_comm_t* coll_comm;

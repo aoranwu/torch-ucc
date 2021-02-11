@@ -7,6 +7,7 @@
 #include <torch_ucc.hpp>
 #include <torch_ucc_sendrecv.hpp>
 #include <utility>
+#include <cstdlib>
 #ifdef USE_CUDA
 #include <c10/cuda/CUDAGuard.h>
 #endif
@@ -159,11 +160,46 @@ void ProcessGroupUCC::read_config() {
   }
 }
 
+
+// void ProcessGroupNCCL::parseNcclBlockingWait() {
+//   char* blockingWait = getenv(NCCL_BLOCKING_WAIT);
+//   if (blockingWait != nullptr) {
+//     auto val = std::stoi(blockingWait);
+//     if (val == 1) {
+//       // Make wait() and synchronize() a blocking call.
+//       blockingWait_ = true;
+//     } else if (val != 0) {
+//       throw std::runtime_error(
+//           "Invalid value for environment variable: " +
+//           std::string(NCCL_BLOCKING_WAIT));
+//     }
+//   }
+// }
+
+
+
 ProcessGroupUCC::ProcessGroupUCC(
     const c10::intrusive_ptr<Store>& store,
     int rank,
     int size)
     : ProcessGroup(rank, size), store_(store), stop_progress_loop(false) {
+
+    char*ordering = std::getenv("ORDERING");
+      if(ordering!=nullptr){
+        auto val = std::atoi(ordering);
+        if(val==0){
+          ordering_ = ORDERING::FIFO;
+        }else if(val==1){
+          ordering_ = ORDERING::LIFO;
+        }else if(val==2){
+          ordering_ = ORDERING::SJF;
+        }else{
+          ordering_ = ORDERING::FIFO;
+        }
+      }else{
+        ordering_ = ORDERING::FIFO;
+      }
+
   torch_ucx_status_t st;
   torch_ucc_status_t st_ucc;
 
@@ -240,14 +276,29 @@ void ProcessGroupUCC::progress_loop(c10::DeviceIndex default_dev_idx) {
   }
 }
 
+
+
+
 c10::intrusive_ptr<ProcessGroup::Work> ProcessGroupUCC::enqueue_request(
     torch_ucc_coll_request_t* req,
     void* scratch) {
   std::unique_lock<std::mutex> lock(pg_mutex);
-
-  auto iter = progress_list.emplace(
-      progress_list.end(),
-      c10::make_intrusive<ProcessGroupUCC::WorkColl>(coll_ops, progress_list));
+  auto iter = progress_list.end();
+  if(ordering_==ORDERING::FIFO){
+    iter = progress_list.emplace(
+        progress_list.end(),
+        c10::make_intrusive<ProcessGroupUCC::WorkColl>(coll_ops, progress_list));
+  }else if(ordering_==ORDERING::LIFO){
+    iter = progress_list.emplace(
+        progress_list.begin(),
+        c10::make_intrusive<ProcessGroupUCC::WorkColl>(coll_ops, progress_list));
+  }else{
+    auto pos = progress_list.begin();
+    for(;pos!=progress_list.end()&&(*pos)->coll_req->size()<=req->size();pos++);
+    iter = progress_list.emplace(
+        pos,
+        c10::make_intrusive<ProcessGroupUCC::WorkColl>(coll_ops, progress_list));
+  }
   (*iter)->work_list_entry = iter;
   (*iter)->coll_req = req;
   (*iter)->blocking_wait = config.blocking_wait;
@@ -293,6 +344,25 @@ c10::intrusive_ptr<ProcessGroup::Work> ProcessGroupUCC::broadcast(
   }
   return enqueue_request(coll_req, nullptr);
 }
+
+// c10::intrusive_ptr<ProcessGroup::Work> ProcessGroupUCC::_allreduce(
+//     std::vector<at::Tensor>& tensors,
+//     const AllreduceOptions& opts) {
+//   torch_ucc_coll_comm_t* ucc_comm;
+//   torch_ucc_coll_request_t* coll_req;
+//   torch_ucc_status_t st;
+
+//   check_tensor(tensors);
+//   c10::DeviceGuard guard(tensors[0].device());
+//   ucc_comm = get_coll_comm();
+//   st = coll_ops.allreduce(ucc_comm, tensors, opts, &coll_req);
+//   if (st != TORCH_UCC_OK) {
+//     throw std::runtime_error("ProcessGroupUCC: allreduce failed");
+//   }
+
+//   return enqueue_request(coll_req, nullptr);
+// }
+
 
 c10::intrusive_ptr<ProcessGroup::Work> ProcessGroupUCC::allreduce(
     std::vector<at::Tensor>& tensors,
